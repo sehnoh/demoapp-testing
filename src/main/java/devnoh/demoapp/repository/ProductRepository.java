@@ -1,6 +1,8 @@
 package devnoh.demoapp.repository;
 
 import devnoh.demoapp.domain.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,6 +13,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByName(String name);
 
-    List<Product> findByActiveIsTrue();
+    Page<Product> findByActiveIsTrue(Pageable pageable);
 
 }

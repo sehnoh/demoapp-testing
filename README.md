@@ -111,10 +111,13 @@ Spring Boot based tests. This annotation configures a complete test environment 
 your beans and everything set up.
 
 It provides the following features over and above the regular Spring TestContext Framework:
-* Uses ```SpringBootContextLoader``` as the default ```ContextLoader``` when no specific ```@ContextConfiguration(loader=...)``` is defined.
-* Automatically searches for a ```@SpringBootConfiguration``` when nested ```@Configuration``` is not used, and no explicit classes are specified.
+* Uses ```SpringBootContextLoader``` as the default ```ContextLoader``` when no specific
+```@ContextConfiguration(loader=...)``` is defined.
+* Automatically searches for a ```@SpringBootConfiguration``` when nested ```@Configuration```
+is not used, and no explicit classes are specified.
 * Allows custom ```Environment``` properties to be defined using the properties attribute.
-* Provides support for different ```webEnvironment``` modes, including the ability to start a fully running container listening on a defined or random port.
+* Provides support for different ```webEnvironment``` modes, including the ability to start
+a fully running container listening on a defined or random port.
 * Registers a ```TestRestTemplate``` bean for use in web tests that are using a fully running container.
 
 A typical Spring Boot 1.4 integration test will look like this:
@@ -130,13 +133,15 @@ public class MyTest {
 }
 ```
 
+Here’s a breakdown of what’s happening:
 * **```@RunWith(SpringRunner.class)```** tells JUnit to run using Spring's testing support.
 * **```@SpringBootTest```** is saying "bootstrap with Spring Boot's support" (e.g. load
 ```application.properties``` and give me all the Spring Boot goodness).
 * The ```webEnvironment``` attribute of ```@SpringBootTest``` can be used to configure the
-runtime environment. ```WebEnvironment.RANDOM_PORT``` might be used so that the container
-will start at any random port. It will be helpful if several integration tests are running
-in parallel on the same machine.
+runtime environment. You can start tests with a MOCK servlet environment or with a real
+HTTP server running on either a ```RANDOM_PORT``` or a ```DEFINED_PORT```.
+* ```WebEnvironment.RANDOM_PORT``` might be used so that the container will start at any random
+port. It will be helpful if several integration tests are running in parallel on the same machine.
 * **```@TestPropertySource```** can be used to configure locations of properties files specific
 to the tests. The property file loaded with ```@TestPropertySource``` will override the existing
 ```application.properties``` file.
@@ -144,10 +149,10 @@ to the tests. The property file loaded with ```@TestPropertySource``` will overr
 
 ## Testing JPA Repositories with @DataJpaTest
 
-```@DataJpaTest``` is an annotation that can be used in combination with ```@RunWith(SpringRunner.class)```
-for a typical JPA test. It can be used when a test focuses **only*** on JPA components.
-Using this annotation will disable full auto-configuration and instead apply only configuration
-relevant to JPA tests.
+```@DataJpaTest``` is an annotation that can be used in combination with
+```@RunWith(SpringRunner.class)``` for a typical JPA test. It can be used when a test
+focuses **only*** on JPA components. Using this annotation will disable full auto-configuration
+and instead apply only configuration relevant to JPA tests.
 
 By default, tests annotated with @DataJpaTest will use an embedded in-memory database
 (replacing any explicit or usually auto-configured DataSource). The ```@AutoConfigureTestDatabase```
@@ -170,7 +175,6 @@ the need for configuring and starting an actual database for test purposes.
 ```
 
 ```@DataJpaTest``` provides some standard setup needed for testing the persistence layer:
-
 * configuring H2, an in-memory database
 * setting Hibernate, Spring Data, and the DataSource
 * performing an ```@EntityScan```
@@ -231,6 +235,7 @@ public class ProductRepositoryTest {
 }
 ```
 
+
 ## Testing Mongo Repositories with @DataMongoTest
 
 ```@DataMongoTest``` is an annotation that can be used in combination with ```@RunWith(SpringRunner.class)```
@@ -254,8 +259,50 @@ the following dependency is required.
 Example:
 
 ```
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@DataMongoTest
+public class StudentRepositoryTest {
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    private Student student1;
+
+    private Student student2;
+
+    @Before
+    public void setUp() throws Exception {
+        student1 = new Student();
+        student1.setName("Jack Bauer");
+        student1.setGrade(6);
+        mongoTemplate.save(student1);
+
+        student2 = new Student();
+        student2.setName("Tony Almeida");
+        student2.setGrade(4);
+        mongoTemplate.save(student2);
+    }
+
+    @Test
+    public void findByName() {
+        List<Student> students = studentRepository.findByName("Jack Bauer");
+        assertEquals(1, students.size());
+        assertEquals(student1, students.get(0));
+    }
+
+    @Test
+    public void findByName_NotFound() {
+        List<Student> students = studentRepository.findByName("Chloe O'Brian");
+        assertEquals(0, students.size());
+    }
+}
 
 ```
+
 
 ## Testing Services with @MockBean
 
@@ -267,6 +314,7 @@ test method.
 Example:
 
 ```
+
 
 ```
 
