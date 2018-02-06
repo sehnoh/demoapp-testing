@@ -135,7 +135,7 @@ to the tests. The property file loaded with ```@TestPropertySource``` will overr
 
 ## Testing JPA Repositories with @JpaDataTest
 
-To test the persistence layer with @JpaDataTest, the following dependency is required.
+To test the persistence layer with ```@JpaDataTest```, the following dependency is required.
 The H2 DB is an in-memory database that eliminates the need for configuring and starting
 an actual database for test purposes.
 
@@ -147,7 +147,19 @@ an actual database for test purposes.
 </dependency>
 ```
 
-Here is an example:
+```@DataJpaTest``` provides some standard setup needed for testing the persistence layer:
+
+* configuring H2, an in-memory database
+* setting Hibernate, Spring Data, and the DataSource
+* performing an ```@EntityScan```
+* turning on SQL logging
+
+To carry out some DB operation, we need some records already setup in our database.
+To setup such data, we can use ```TestEntityManager```. The ```TestEntityManager```
+provided by Spring Boot is an alternative to the standard JPA EntityManager that provides
+methods commonly used when writing tests.
+
+Example:
 
 ```
 @RunWith(SpringRunner.class)
@@ -168,7 +180,6 @@ public class ProductRepositoryTest {
         product.setName("iPhone 7");
         product.setDescription("This is an Apple phone.");
         product.setActive(true);
-
         entityManager.persist(product);
     }
 
@@ -192,7 +203,21 @@ public class ProductRepositoryTest {
 
 ## Testing Mongo Repositories with @MongoDataTest
 
+To test the persistence layer with ```@MongoDataTest```, the following dependency is required.
 
+```
+<dependency>
+    <groupId>de.flapdoodle.embed</groupId>
+    <artifactId>de.flapdoodle.embed.mongo</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+Example:
+
+```
+
+```
 
 ## Testing Services with @MockBean
 
@@ -201,7 +226,7 @@ for a bean inside your ```ApplicationContext```. You can use the annotation to a
 or replace a single existing bean definition. Mock beans are automatically reset after each
 test method.
 
-Here is an example:
+Example:
 
 ```
 
@@ -209,9 +234,6 @@ Here is an example:
 
 ## Testing RestControllers with @WebMvcTest
 
-
-
-## Testing with ActiveMQ
 
 
 ## Naming Conventions
@@ -253,4 +275,4 @@ Examples:
 * https://spring.io/blog/2016/04/15/testing-improvements-in-spring-boot-1-4
 * http://www.baeldung.com/spring-boot-testing
 * https://stackoverflow.com/questions/5357601/whats-the-difference-between-unit-tests-and-integration-tests
-
+* https://vitalflux.com/7-popular-unit-test-naming-conventions/
