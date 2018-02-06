@@ -106,10 +106,16 @@ public class SomeClassTest {
 ## Integration Testing with @SpringBootTest
 
 Spring Boot offers a lot of support for writing integration tests for your application.
-First of all, you can use the new ```@SpringBootTest``` annotation. This annotation configures
-a complete test environment with all your beans and everything set up.
-You can choose to start a mock servlet environment, or even start a real one with the
-```webEnvironment``` attribute of the ```@SpringBootTest``` annotation.
+```@SpringBootTest``` is an annotation that can be specified on a test class that runs
+Spring Boot based tests. This annotation configures a complete test environment with all
+your beans and everything set up.
+
+It provides the following features over and above the regular Spring TestContext Framework:
+* Uses ```SpringBootContextLoader``` as the default ```ContextLoader``` when no specific ```@ContextConfiguration(loader=...)``` is defined.
+* Automatically searches for a ```@SpringBootConfiguration``` when nested ```@Configuration``` is not used, and no explicit classes are specified.
+* Allows custom ```Environment``` properties to be defined using the properties attribute.
+* Provides support for different ```webEnvironment``` modes, including the ability to start a fully running container listening on a defined or random port.
+* Registers a ```TestRestTemplate``` bean for use in web tests that are using a fully running container.
 
 A typical Spring Boot 1.4 integration test will look like this:
 
@@ -127,17 +133,33 @@ public class MyTest {
 * **```@RunWith(SpringRunner.class)```** tells JUnit to run using Spring's testing support.
 * **```@SpringBootTest```** is saying "bootstrap with Spring Boot's support" (e.g. load
 ```application.properties``` and give me all the Spring Boot goodness).
+* The ```webEnvironment``` attribute of ```@SpringBootTest``` can be used to configure the
+runtime environment. ```WebEnvironment.RANDOM_PORT``` might be used so that the container
+will start at any random port. It will be helpful if several integration tests are running
+in parallel on the same machine.
 * **```@TestPropertySource```** can be used to configure locations of properties files specific
 to the tests. The property file loaded with ```@TestPropertySource``` will override the existing
 ```application.properties``` file.
 
 
+## Testing JPA Repositories with @DataJpaTest
 
-## Testing JPA Repositories with @JpaDataTest
+```@DataJpaTest``` is an annotation that can be used in combination with ```@RunWith(SpringRunner.class)```
+for a typical JPA test. It can be used when a test focuses **only*** on JPA components.
+Using this annotation will disable full auto-configuration and instead apply only configuration
+relevant to JPA tests.
 
-To test the persistence layer with ```@JpaDataTest```, the following dependency is required.
-The H2 DB is an in-memory database that eliminates the need for configuring and starting
-an actual database for test purposes.
+By default, tests annotated with @DataJpaTest will use an embedded in-memory database
+(replacing any explicit or usually auto-configured DataSource). The ```@AutoConfigureTestDatabase```
+annotation can be used to override these settings.
+
+If you are looking to load your full application configuration, but use an embedded database,
+you should consider ```@SpringBootTest``` combined with ```@AutoConfigureTestDatabase```
+rather than this annotation.
+
+To test the persistence layer using an embedded in-memory database with ```@DataJpaTest```,
+the following dependency is required. The H2 DB is an in-memory database that eliminates
+the need for configuring and starting an actual database for test purposes.
 
 ```
 <dependency>
@@ -173,24 +195,32 @@ public class ProductRepositoryTest {
     @Autowired
     private ProductRepository productRepository;
 
+    private Product product1;
+
+    private Product product2;
+
     @Before
     public void setUp() throws Exception {
-        Product product = new Product();
-        product.setCode("P001");
-        product.setName("iPhone 7");
-        product.setDescription("This is an Apple phone.");
-        product.setActive(true);
-        entityManager.persist(product);
+        product1 = new Product();
+        product1.setCode("P001");
+        product1.setName("iPhone 7");
+        product1.setDescription("This is an Apple phone.");
+        product1.setActive(true);
+        entityManager.persist(product1);
+
+        product2 = new Product();
+        product2.setCode("P002");
+        product2.setName("Pixel 2");
+        product2.setDescription("This is a Google phone.");
+        product2.setActive(false);
+        entityManager.persist(product2);
     }
 
     @Test
     public void findByCode() {
         Product product = productRepository.findByCode("P001");
         assertNotNull(product);
-        assertEquals("P001", product.getCode());
-        assertEquals("iPhone 7", product.getName());
-        assertEquals("This is an Apple phone.", product.getDescription());
-        assertEquals(true, product.isActive());
+        assertEquals(product1, product);
     }
 
     @Test
@@ -201,9 +231,17 @@ public class ProductRepositoryTest {
 }
 ```
 
-## Testing Mongo Repositories with @MongoDataTest
+## Testing Mongo Repositories with @DataMongoTest
 
-To test the persistence layer with ```@MongoDataTest```, the following dependency is required.
+```@DataMongoTest``` is an annotation that can be used in combination with ```@RunWith(SpringRunner.class)```
+for a typical MongoDB test. It can be used when a test focuses only on MongoDB components.
+Using this annotation will disable full auto-configuration and instead apply only configuration
+relevant to MongoDB tests.
+
+By default, tests annotated with ```@DataMongoTest``` will use an embedded in-memory MongoDB process (if available).
+
+To test the persistence layer using an embedded in-memory MongoDB with ```@DataMongoTest```,
+the following dependency is required.
 
 ```
 <dependency>
@@ -277,5 +315,6 @@ Examples:
 
 * https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html
 * https://spring.io/blog/2016/04/15/testing-improvements-in-spring-boot-1-4
+* http://www.baeldung.com/spring-boot-testing
 * https://stackoverflow.com/questions/5357601/whats-the-difference-between-unit-tests-and-integration-tests
 * https://vitalflux.com/7-popular-unit-test-naming-conventions/
