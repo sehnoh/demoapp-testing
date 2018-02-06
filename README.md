@@ -234,7 +234,11 @@ Example:
 
 ## Testing RestControllers with @WebMvcTest
 
+Example:
 
+```
+
+```
 
 ## Naming Conventions
 
@@ -274,5 +278,4 @@ Examples:
 * https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html
 * https://spring.io/blog/2016/04/15/testing-improvements-in-spring-boot-1-4
 * http://www.baeldung.com/spring-boot-testing
-* https://stackoverflow.com/questions/5357601/whats-the-difference-between-unit-tests-and-integration-tests
 * https://vitalflux.com/7-popular-unit-test-naming-conventions/
