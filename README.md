@@ -4,6 +4,7 @@ This page describes how to write tests using the framework support in Spring Boo
 It will cover unit tests that can run in isolation as well as integration tests
 that will bootstrap Spring context before executing tests.
 
+
 ## Maven Dependencies
 
 The ```spring-boot-starter-test``` is the primary dependency that contains the majority of
@@ -17,7 +18,6 @@ elements required for our tests.
 </dependency>
 ```
 
-
 With the ```spring-boot-starter-test```, the following libraries will be provided.
 
 * **JUnit** — The de-facto standard for unit testing Java applications.
@@ -27,6 +27,7 @@ With the ```spring-boot-starter-test```, the following libraries will be provide
 * **Mockito** — A Java mocking framework.
 * **JSONassert** — An assertion library for JSON.
 * **JsonPath** — XPath for JSON.
+
 
 ## Unit Tests vs. Integration Tests
 
