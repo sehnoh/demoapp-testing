@@ -168,6 +168,11 @@ the need for configuring and starting an actual database for test purposes.
 
 ```
 <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+<dependency>
     <groupId>com.h2database</groupId>
     <artifactId>h2</artifactId>
     <scope>test</scope>
@@ -250,6 +255,11 @@ To test the persistence layer using an embedded in-memory MongoDB with ```@DataM
 the following dependency is required.
 
 ```
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-mongodb</artifactId>
+</dependency>
+
 <dependency>
     <groupId>de.flapdoodle.embed</groupId>
     <artifactId>de.flapdoodle.embed.mongo</artifactId>
@@ -371,7 +381,7 @@ In many cases, unit tests can be performed using Mockito without any Spring test
 the mocks that are created with the ```@Mock``` (or ```@Spy```) annotations into this instance.
 
 Note that ```@RunWith(MockitoJUnitRunner.class)``` or ```Mockito.initMocks(this)``` must be
-used to initialise these mocks and inject them.
+used to initialize these mocks and inject them.
 
 Example:
 
@@ -414,9 +424,8 @@ public class ProductServiceTest {
 
 ## Testing Controllers with @WebMvcTest
 
-To test the Controllers, ```@WebMvcTest``` can be used to auto-configure the Spring MVC
-infrastructure for our unit tests. In most of the cases, ```@WebMvcTest``` will be limited
-to bootstrap a single controller. It is used along with ```@MockBean``` to provide mock
+```@WebMvcTest``` can be used to auto-configure the Spring MVC infrastructure for Controller
+unit tests. In most of the cases, ```@WebMvcTest``` will be limited to bootstrap a single controller. It is used along with ```@MockBean``` to provide mock
 implementations for required dependencies.
 
 ```@WebMvcTest``` also auto-configures ```MockMvc``` which offers a powerful way of easy
@@ -469,13 +478,18 @@ public class ProductControllerTest {
 
 ## Testing Controllers with MockitoJUnitRunner
 
-In many cases, unit tests can be performed using Mockito without any Spring test features.
+Also Controllers can be tested using Mockito without the help of ```@WebMvcTest```.
 
-```@Mock``` creates a mock. ```@InjectMocks``` creates an instance of the class and injects
-the mocks that are created with the ```@Mock``` (or ```@Spy```) annotations into this instance.
+In this case, all mocks created by ```@Mock``` should be injected to an instance of the class
+using ```@InjectMocks```. Note that ```@RunWith(MockitoJUnitRunner.class)``` or ```Mockito.initMocks(this)```
+must be used to initialize these mocks and inject them.
 
-Note that ```@RunWith(MockitoJUnitRunner.class)``` or ```Mockito.initMocks(this)``` must be
-used to initialise these mocks and inject them.
+There are two ways to configure ```MockMvc```:
+* ```MockMvcBuilders.webAppContextSetup(webApplicationContext).build()```
+* ```MockMvcBuilders.standaloneSetup(controller).build()```
+
+The first approach will automatically load the Spring configuration and inject ```WebApplicationContext```
+into the test. The second approach does not load the Spring configuration.
 
 Example:
 
