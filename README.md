@@ -55,12 +55,6 @@ Actually "integration test" gets used for a wide variety of things, from full-on
 against an environment made to resemble production to any test that uses a resource (like a
 database or queue) that isn't mocked out.
 
-> __Note:__
-Ideally, we should keep the integration tests separated from the unit tests and should not
-run along with the unit tests. We can do that by using a different profile to only run the
-integration tests. A couple of reasons for doing this could be that the integration tests
-are time-consuming and might need an actual database to execute.
-
 
 ## Unit Testing with JUnit
 
@@ -185,10 +179,9 @@ the need for configuring and starting an actual database for test purposes.
 * performing an ```@EntityScan```
 * turning on SQL logging
 
-To carry out some DB operation, we need some records already setup in our database.
-To setup such data, we can use ```TestEntityManager```. The ```TestEntityManager```
-provided by Spring Boot is an alternative to the standard JPA EntityManager that provides
-methods commonly used when writing tests.
+To carry out DB operation, some data needs to be setup in database. This can be done using
+```TestEntityManager```. The ```TestEntityManager``` provided by Spring Boot is an alternative
+to the standard JPA EntityManager that provides methods commonly used when writing tests.
 
 Example:
 
