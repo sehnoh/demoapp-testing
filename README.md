@@ -52,7 +52,7 @@ The integration tests do a more convincing job of demonstrating the system works
 to non-programmers) than a set of unit tests can, at least to the extent the integration test
 environment resembles production.
 
-Actually "integration test" gets used for a wide variety of things, from full-on system tests
+Actually integration test gets used for a wide variety of things, from full-on system tests
 against an environment made to resemble production to any test that uses a resource (like a
 database or queue) that isn't mocked out.
 
@@ -575,6 +575,3 @@ Examples:
 
 * https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html
 * https://spring.io/blog/2016/04/15/testing-improvements-in-spring-boot-1-4
-* http://www.baeldung.com/spring-boot-testing
-* https://stackoverflow.com/questions/5357601/whats-the-difference-between-unit-tests-and-integration-tests
-* https://vitalflux.com/7-popular-unit-test-naming-conventions/
