@@ -551,8 +551,8 @@ following the naming conventions below.
 
 Examples:
 
-* ProductService — A target class under test
-* ProductServiceTest — A test case class
+* ```ProductService``` — A target class under test
+* ```ProductServiceTest``` — A test case class
 
 > __Note:__
 It is recommended to locate a test class in the same package with the target class,
@@ -562,14 +562,14 @@ so that it will help minimize the access level of test methods.
 
 Test method names should follow one of the naming conventions below.
 
-* **MethodName(_ExpectedBehavior(_StateUnderTest))**
+* **MethodName_ExpectedBehavior_StateUnderTest**
 * **test{FeatureBeingTested}**
 
 Examples:
 
-* postMessage_InternalServerError
-* withdrawMoney_ThrowsException_IfAccountIsInvalid
-* testCRUD
+* ```postMessage_InternalServerError```
+* ```withdrawMoney_ThrowsException_IfAccountIsInvalid```
+* ```testCRUD```
 
 
 ## References
