@@ -1,7 +1,6 @@
 package devnoh.demoapp.repository;
 
 import devnoh.demoapp.domain.Product;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +23,6 @@ import static org.junit.Assert.fail;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DataJpaTest
-@Slf4j
 public class ProductRepositoryTest {
 
     @Autowired
@@ -80,7 +78,6 @@ public class ProductRepositoryTest {
     public void findByActiveIsTrue() {
         Page<Product> products =
                 productRepository.findByActiveIsTrue(new PageRequest(0, 5, Sort.Direction.ASC, "name"));
-        log.debug("products={}", products);
         assertEquals(1, products.getTotalPages());
         assertEquals(1, products.getTotalElements());
         assertEquals(1, products.getContent().size());

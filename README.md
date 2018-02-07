@@ -68,7 +68,7 @@ The following code is a standard test case using JUnit 4. At least one ```@Test`
 and ```@BeforeClass```, ```@Before```, ```@After``` and ```@AfterClass``` are all optional.
 
 ```
-public class SomeClassTest {
+public class MyTest {
 
     @BeforeClass
     public static void setUpBeforeAll() throws Exception {
@@ -238,12 +238,13 @@ public class ProductRepositoryTest {
 
 ## Testing Mongo Repositories with @DataMongoTest
 
-```@DataMongoTest``` is an annotation that can be used in combination with ```@RunWith(SpringRunner.class)```
-for a typical MongoDB test. It can be used when a test focuses only on MongoDB components.
-Using this annotation will disable full auto-configuration and instead apply only configuration
-relevant to MongoDB tests.
+```@DataMongoTest``` is an annotation that can be used in combination with
+```@RunWith(SpringRunner.class)``` for a typical MongoDB test. It can be used when
+a test focuses only on MongoDB components. Using this annotation will disable full
+auto-configuration and instead apply only configuration relevant to MongoDB tests.
 
-By default, tests annotated with ```@DataMongoTest``` will use an embedded in-memory MongoDB process (if available).
+By default, tests annotated with ```@DataMongoTest``` will use an embedded in-memory
+MongoDB process (if available).
 
 To test the persistence layer using an embedded in-memory MongoDB with ```@DataMongoTest```,
 the following dependency is required.
@@ -308,23 +309,221 @@ public class StudentRepositoryTest {
 
 Spring Boot includes a ```@MockBean``` annotation that can be used to define a Mockito mock
 for a bean inside your ```ApplicationContext```. You can use the annotation to add new beans,
-or replace a single existing bean definition. Mock beans are automatically reset after each
-test method.
+or replace a single existing bean definition. Additionally you can also use ```@SpyBean```
+to wrap any existing bean with a Mockito spy.
+
+To check the Service class, we need to have an instance of Service class created and available
+as a ```@Bean``` so that we can ```@Autowire``` it in our test class. This configuration is
+achieved by using the ```@TestConfiguration``` annotation.
 
 Example:
 
 ```
+@RunWith(SpringRunner.class)
+public class ProductServiceTest {
 
+    @TestConfiguration
+    static class ProductServiceTestConfiguration {
 
+        @Bean
+        public ProductService productService() {
+            return new ProductService();
+        }
+    }
+
+    @Autowired
+    private ProductService productService;
+
+    @MockBean
+    private ProductRepository productRepository;
+
+    private Product product;
+
+    @Before
+    public void setUp() throws Exception {
+        product = new Product();
+        product.setId(1L);
+        product.setCode("P001");
+        product.setName("Product 1");
+        product.setDescription("Test is a cool product.");
+        product.setActive(true);
+    }
+
+    @Test
+    public void findProductByCode() {
+        when(productRepository.findByCode(anyString())).thenReturn(product);
+
+        Product found = productService.findProductByCode("P001");
+        assertThat(found).isEqualTo(product);
+
+        verify(productRepository, times(1)).findByCode(anyString());
+        verifyNoMoreInteractions(productRepository);
+    }
+}
 ```
 
-## Testing RestControllers with @WebMvcTest
+
+## Testing Services with MockitoJUnitRunner
+
+In many cases, unit tests can be performed using Mockito without any Spring test features.
+
+```@Mock``` creates a mock. ```@InjectMocks``` creates an instance of the class and injects
+the mocks that are created with the ```@Mock``` (or ```@Spy```) annotations into this instance.
+
+Note that ```@RunWith(MockitoJUnitRunner.class)``` or ```Mockito.initMocks(this)``` must be
+used to initialise these mocks and inject them.
 
 Example:
 
 ```
+@RunWith(MockitoJUnitRunner.class)
+public class ProductServiceTest {
+
+    @InjectMocks
+    private ProductService productService;
+
+    @Mock
+    private ProductRepository productRepository;
+
+    private Product product;
+
+    @Before
+    public void setUp() throws Exception {
+        product = new Product();
+        product.setId(1L);
+        product.setCode("P001");
+        product.setName("Product 1");
+        product.setDescription("Test is a cool product.");
+        product.setActive(true);
+    }
+
+    @Test
+    public void findProductByCode() {
+        when(productRepository.findByCode(anyString())).thenReturn(product);
+
+        Product found = productService.findProductByCode("P001");
+        assertThat(found).isEqualTo(product);
+
+        verify(productRepository, times(1)).findByCode(anyString());
+        verifyNoMoreInteractions(productRepository);
+    }
+}
 
 ```
+
+
+## Testing Controllers with @WebMvcTest
+
+To test the Controllers, ```@WebMvcTest``` can be used to auto-configure the Spring MVC
+infrastructure for our unit tests. In most of the cases, ```@WebMvcTest``` will be limited
+to bootstrap a single controller. It is used along with ```@MockBean``` to provide mock
+implementations for required dependencies.
+
+```@WebMvcTest``` also auto-configures ```MockMvc``` which offers a powerful way of easy
+testing MVC controllers without starting a full HTTP server.
+
+Example:
+
+```
+@RunWith(SpringRunner.class)
+@WebMvcTest(ProductController.class)
+public class ProductControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private ProductService productService;
+
+    private Product product;
+
+    @Before
+    public void setUp() throws Exception {
+        product = new Product();
+        product.setId(1L);
+        product.setCode("P001");
+        product.setName("Product 1");
+        product.setDescription("This is a cool product.");
+        product.setActive(true);
+    }
+
+    @Test
+    public void findProductById() throws Exception {
+        when(productService.findProductById(anyLong())).thenReturn(product);
+
+        mockMvc.perform(get("/products/1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.code", is("P001")))
+                .andExpect(jsonPath("$.name", is("Product 1")))
+                .andExpect(jsonPath("$.description", is("This is a cool product.")))
+                .andExpect(jsonPath("$.active", is(true)));
+
+        verify(productService, times(1)).findProductById(anyLong());
+        verifyNoMoreInteractions(productService);
+    }
+}
+```
+
+
+## Testing Controllers with MockitoJUnitRunner
+
+In many cases, unit tests can be performed using Mockito without any Spring test features.
+
+```@Mock``` creates a mock. ```@InjectMocks``` creates an instance of the class and injects
+the mocks that are created with the ```@Mock``` (or ```@Spy```) annotations into this instance.
+
+Note that ```@RunWith(MockitoJUnitRunner.class)``` or ```Mockito.initMocks(this)``` must be
+used to initialise these mocks and inject them.
+
+Example:
+
+```
+@RunWith(MockitoJUnitRunner.class)
+public class ProductControllerMockitoTest {
+
+    @InjectMocks
+    private ProductController productController;
+
+    @Mock
+    private ProductService productService;
+
+    private MockMvc mockMvc;
+
+    private Product product;
+
+    @Before
+    public void setUp() throws Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
+
+        product = new Product();
+        product.setId(1L);
+        product.setCode("P001");
+        product.setName("Product 1");
+        product.setDescription("This is a cool product.");
+        product.setActive(true);
+    }
+
+    @Test
+    public void findProductById() throws Exception {
+        when(productService.findProductById(anyLong())).thenReturn(product);
+
+        mockMvc.perform(get("/products/1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.code", is("P001")))
+                .andExpect(jsonPath("$.name", is("Product 1")))
+                .andExpect(jsonPath("$.description", is("This is a cool product.")))
+                .andExpect(jsonPath("$.active", is(true)));
+
+        verify(productService, times(1)).findProductById(anyLong());
+        verifyNoMoreInteractions(productService);
+    }
+}
+```
+
 
 ## Naming Conventions
 

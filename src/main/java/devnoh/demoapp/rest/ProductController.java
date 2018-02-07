@@ -56,7 +56,7 @@ public class ProductController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<Product> findActiveProducts(
             @PageableDefault(sort = {"name"}, direction = Sort.Direction.ASC, size = 5) Pageable pageable) {
-        log.debug("pagable={}", pageable);
+        log.debug("pageable={}", pageable);
         return productService.findActiveProducts(pageable);
     }
 

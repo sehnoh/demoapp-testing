@@ -3,6 +3,8 @@ package devnoh.demoapp.service;
 import devnoh.demoapp.domain.Student;
 import devnoh.demoapp.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +27,8 @@ public class StudentService {
         return studentRepository.findByName(name);
     }
 
-    public List<Student> findStudentsByGrade(int grade) {
-        return studentRepository.findByGrade(grade);
+    public Page<Student> findStudentsByGrade(int grade, Pageable pageable) {
+        return studentRepository.findByGrade(grade, pageable);
     }
 
 }

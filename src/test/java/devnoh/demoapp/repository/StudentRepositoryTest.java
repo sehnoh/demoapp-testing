@@ -7,6 +7,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -44,21 +47,24 @@ public class StudentRepositoryTest {
 
     @Test
     public void findByName() {
-        List<Student> students = studentRepository.findByName("Jack Bauer");
-        assertEquals(1, students.size());
-        assertEquals(student1, students.get(0));
+        List<Student> list = studentRepository.findByName("Jack Bauer");
+        assertEquals(1, list.size());
+        assertEquals(student1, list.get(0));
     }
 
     @Test
     public void findByName_NotFound() {
-        List<Student> students = studentRepository.findByName("Chloe O'Brian");
-        assertEquals(0, students.size());
+        List<Student> list = studentRepository.findByName("Chloe O'Brian");
+        assertEquals(0, list.size());
     }
 
     @Test
     public void findByGrade() {
-        List<Student> students = studentRepository.findByName("Tony Almeida");
-        assertEquals(1, students.size());
-        assertEquals(student2, students.get(0));
+        Page<Student> page = studentRepository.findByGrade(6, new PageRequest(0, 5, Sort.Direction.ASC, "name"));
+        assertEquals(1, page.getTotalPages());
+        assertEquals(1, page.getTotalElements());
+        assertEquals(1, page.getContent().size());
+        assertEquals(student1, page.getContent().get(0));
     }
+
 }

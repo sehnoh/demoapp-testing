@@ -1,13 +1,8 @@
 package devnoh.demoapp;
 
-import devnoh.demoapp.domain.Product;
-import devnoh.demoapp.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.stereotype.Component;
 
 @SpringBootApplication
 @Slf4j
@@ -17,6 +12,7 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
+    /*
     @Component
     @Slf4j
     static class AppConfigRunner implements CommandLineRunner {
@@ -37,4 +33,5 @@ public class Application {
             }
         }
     }
+    */
 }
