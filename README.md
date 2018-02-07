@@ -56,6 +56,11 @@ Actually "integration test" gets used for a wide variety of things, from full-on
 against an environment made to resemble production to any test that uses a resource (like a
 database or queue) that isn't mocked out.
 
+>__Note:__
+Ideally, it is recommended to keep the integration tests separated from the unit tests and
+not to run along the unit tests. It can be done by using a different profile to only run
+the integration tests. A couple of reasons for doing this could be that the integration tests
+are time-consuming and might need an actual database to execute.
 
 ## Unit Testing with JUnit
 
@@ -123,7 +128,7 @@ A typical Spring Boot 1.4 integration test will look like this:
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class MyTest {
 
-    // write test cases here
+    // Write test cases here
 
 }
 ```
