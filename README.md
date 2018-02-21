@@ -546,7 +546,7 @@ As each class has its own test class, name the TestCase class after the class be
 following the naming conventions below.
 
 * **{ClassName}Test**
-* **{ClassName}Tests** — Only for multi-featured integration tests or test suites.
+* **{FeatureBeingTested}Tests** — Only for multi-featured integration tests or test suites.
 
 Examples:
 
