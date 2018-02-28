@@ -10,7 +10,7 @@ that will bootstrap Spring context before executing tests.
 The ```spring-boot-starter-test``` is the primary dependency that contains the majority of
 elements required for our tests.
 
-```
+```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-test</artifactId>
@@ -122,7 +122,7 @@ a fully running container listening on a defined or random port.
 
 A typical Spring Boot 1.4 integration test will look like this:
 
-```
+```java
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -166,7 +166,7 @@ To test the persistence layer using an embedded in-memory database with ```@Data
 the following dependency is required. The H2 DB is an in-memory database that eliminates
 the need for configuring and starting an actual database for test purposes.
 
-```
+```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -191,7 +191,7 @@ to the standard JPA EntityManager that provides methods commonly used when writi
 
 Example:
 
-```
+```java
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DataJpaTest
@@ -253,7 +253,7 @@ MongoDB process (if available).
 To test the persistence layer using an embedded in-memory MongoDB with ```@DataMongoTest```,
 the following dependency is required.
 
-```
+```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -268,7 +268,7 @@ the following dependency is required.
 
 Example:
 
-```
+```java
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DataMongoTest
@@ -327,7 +327,7 @@ achieved by using the ```@TestConfiguration``` annotation.
 
 Example:
 
-```
+```java
 @RunWith(SpringRunner.class)
 public class ProductServiceTest {
 
@@ -384,7 +384,7 @@ used to initialize these mocks and inject them.
 
 Example:
 
-```
+```java
 @RunWith(MockitoJUnitRunner.class)
 public class ProductServiceTest {
 
@@ -432,7 +432,7 @@ testing MVC controllers without starting a full HTTP server.
 
 Example:
 
-```
+```java
 @RunWith(SpringRunner.class)
 @WebMvcTest(ProductController.class)
 public class ProductControllerTest {
@@ -492,7 +492,7 @@ into the test. The second approach does not load the Spring configuration.
 
 Example:
 
-```
+```java
 @RunWith(MockitoJUnitRunner.class)
 public class ProductControllerMockitoTest {
 
