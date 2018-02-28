@@ -67,7 +67,7 @@ are time-consuming and might need an actual database to execute.
 The following code is a standard test case using JUnit 4. At least one ```@Test``` is required,
 and ```@BeforeClass```, ```@Before```, ```@After``` and ```@AfterClass``` are all optional.
 
-```
+```java
 public class MyTest {
 
     @BeforeClass
