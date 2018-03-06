@@ -21,6 +21,9 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+/**
+ * https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/autoconfigure/web/client/RestClientTest.html
+ */
 @RunWith(SpringRunner.class)
 @RestClientTest(OtherRestClient.class)
 @AutoConfigureWebClient(registerRestTemplate = true)
@@ -39,7 +42,7 @@ public class OtherRestClientTest {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void getUuid() {
+    public void getUuid_OK() {
         this.server
                 .expect(requestTo(ENDPOINT_URL))
                 .andRespond(withSuccess("{\"uuid\": \"3f759ca4-2a5e-4721-8d08-a3f959699dd0\"}",
@@ -53,7 +56,7 @@ public class OtherRestClientTest {
     }
 
     @Test
-    public void getUuidWithServerError() throws Exception {
+    public void getUuid_ServerError() throws Exception {
         exception.expect(RestClientException.class);
         exception.expectMessage(Pattern.compile("Failed to get").pattern());
 

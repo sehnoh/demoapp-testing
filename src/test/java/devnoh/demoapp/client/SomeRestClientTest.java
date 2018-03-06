@@ -37,7 +37,7 @@ public class SomeRestClientTest {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void getOriginIp() {
+    public void getOriginIp_OK() {
         this.server
                 .expect(requestTo(ENDPOINT_URL))
                 .andRespond(withSuccess("{\"origin\": \"98.174.154.130\"}", MediaType.APPLICATION_JSON));
@@ -50,7 +50,7 @@ public class SomeRestClientTest {
     }
 
     @Test
-    public void getOriginIpWithServerError() throws Exception {
+    public void getOriginIp_ServerError() throws Exception {
         exception.expect(RestClientException.class);
         exception.expectMessage(Pattern.compile("Failed to get").pattern());
 

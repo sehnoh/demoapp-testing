@@ -538,6 +538,118 @@ public class ProductControllerMockitoTest {
 ```
 
 
+## Testing with @RestClientTest
+
+```@RestClientTest``` can be used in combination with ```@RunWith(SpringRunner.class)``` for a typical
+Spring rest client test. Can be used when a test focuses only on beans that use ```RestTemplateBuilder```.
+
+Using this annotation will disable full auto-configuration and instead apply only configuration relevant
+to rest client tests (i.e. Jackson or GSON auto-configuration and ```@JsonComponent``` beans, but not
+regular ```@Component``` beans).
+
+By default, tests annotated with RestClientTest will also auto-configure a ```MockRestServiceServer```.
+For more fine-grained control the ```@AutoConfigureMockRestServiceServer``` annotation can be used.
+
+Example:
+
+SomeRestClient.java
+```
+@Component
+public class SomeRestClient {
+
+    private RestTemplate restTemplate;
+
+    @Autowired
+    public SomeRestClient(RestTemplateBuilder restTemplateBuilder) {
+        restTemplate = restTemplateBuilder.build();
+    }
+
+    public String getSomeStringFromRemote() {
+        ResponseEntity<String> response = restTemplate
+                .getForEntity("http://remote.domain.com/some/endpoint", String.class);
+
+        // Some logic goes here...
+    }
+}
+```
+
+SomeRestClientTest.java
+```
+@RunWith(SpringRunner.class)
+@RestClientTest(SomeRestClient.class)
+public class SomeRestClientTest {
+
+    private static String ENDPOINT_URL = "http://remote.domain.com/some/endpoint";
+
+    @Autowired
+    private SomeRestClient client;
+
+    @Autowired
+    private MockRestServiceServer server;
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+    @Test
+    public void getSomeStringFromRemote_OK() {
+        this.server
+                .expect(requestTo(ENDPOINT_URL))
+                .andRespond(withSuccess("OK", MediaType.APPLICATION_JSON));
+
+        String response = client.getSomeStringFromRemote();
+
+        assertNotNull(response);
+        assertEquals("OK", response);
+    }
+
+    @Test
+    public void getSomeStringFromRemote_ServerError() throws Exception {
+        exception.expect(RestClientException.class);
+        exception.expectMessage(Pattern.compile("Failed to get").pattern());
+
+        this.server
+                .expect(requestTo(ENDPOINT_URL))
+                .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        String response = client.getSomeStringFromRemote();
+    }
+}
+```
+
+If you are testing a bean that doesn't use ```RestTemplateBuilder``` but instead injects a ```RestTemplate```
+directly, you can add ```@AutoConfigureWebClient(registerRestTemplate=true)```.
+
+OtherRestClient.java
+```
+@Component
+public class OtherRestClient {
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    public String getSomethingFromRemote() {
+        ResponseEntity<String> response = restTemplate
+                .getForEntity("http://remote.domain.com/some/endpoint", String.class);
+
+        // Some logic goes here...
+    }
+}
+```
+
+OtherRestClientTest.java
+```
+@RunWith(SpringRunner.class)
+@RestClientTest(OtherRestClient.class)
+@AutoConfigureWebClient(registerRestTemplate = true)
+@Slf4j
+public class OtherRestClientTest {
+
+    // Some tests go here...
+
+}
+```
+
+
 ## Naming Conventions
 
 ### Naming TestCase Classes

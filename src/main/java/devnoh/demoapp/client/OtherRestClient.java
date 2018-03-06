@@ -16,7 +16,6 @@ public class OtherRestClient {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
     public OtherRestClient() {
     }
 
