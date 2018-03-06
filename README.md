@@ -644,6 +644,12 @@ public class OtherRestClient {
 @Slf4j
 public class OtherRestClientTest {
 
+    @Autowired
+    private OtherRestClient client;
+
+    @Autowired
+    private MockRestServiceServer server;
+
     // Some tests go here...
 
 }
