@@ -591,19 +591,19 @@ public class SomeRestClientTest {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void getSomeStringFromRemote_OK() {
+    public void getSomethingFromRemote_OK() {
         this.server
                 .expect(requestTo(ENDPOINT_URL))
                 .andRespond(withSuccess("OK", MediaType.APPLICATION_JSON));
 
-        String response = client.getSomeStringFromRemote();
+        String response = client.getSomethingFromRemote();
 
         assertNotNull(response);
         assertEquals("OK", response);
     }
 
     @Test
-    public void getSomeStringFromRemote_ServerError() throws Exception {
+    public void getSomethingFromRemote_ServerError() throws Exception {
         exception.expect(RestClientException.class);
         exception.expectMessage(Pattern.compile("Failed to get").pattern());
 
@@ -611,7 +611,7 @@ public class SomeRestClientTest {
                 .expect(requestTo(ENDPOINT_URL))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        String response = client.getSomeStringFromRemote();
+        String response = client.getSomethingFromRemote();
     }
 }
 ```
