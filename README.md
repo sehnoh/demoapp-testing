@@ -553,7 +553,7 @@ For more fine-grained control the ```@AutoConfigureMockRestServiceServer``` anno
 Example:
 
 *SomeRestClient.java*
-```
+```java
 @Component
 public class SomeRestClient {
 
@@ -574,7 +574,7 @@ public class SomeRestClient {
 ```
 
 *SomeRestClientTest.java*
-```
+```java
 @RunWith(SpringRunner.class)
 @RestClientTest(SomeRestClient.class)
 public class SomeRestClientTest {
@@ -620,7 +620,7 @@ If you are testing a bean that doesn't use ```RestTemplateBuilder``` but instead
 directly, you can add ```@AutoConfigureWebClient(registerRestTemplate=true)```.
 
 *OtherRestClient.java*
-```
+```java
 @Component
 public class OtherRestClient {
 
@@ -637,7 +637,7 @@ public class OtherRestClient {
 ```
 
 *OtherRestClientTest.java*
-```
+```java
 @RunWith(SpringRunner.class)
 @RestClientTest(OtherRestClient.class)
 @AutoConfigureWebClient(registerRestTemplate = true)
